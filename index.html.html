@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小学生口算练习</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Comic Sans MS', '微软雅黑', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6ecbf5, #ffb6c1);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #ff6b6b;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .game-info {
+            background: #e0f7fa;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-around;
+            font-size: 1.2rem;
+            color: #00796b;
+            font-weight: bold;
+        }
+        
+        .problem-container {
+            background: #fff9c4;
+            border-radius: 15px;
+            padding: 30px 20px;
+            margin: 20px 0;
+            font-size: 3.5rem;
+            color: #5d4037;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .problem {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .operator {
+            width: 50px;
+            text-align: center;
+        }
+        
+        .answer-input {
+            font-size: 2.5rem;
+            width: 120px;
+            text-align: center;
+            padding: 10px;
+            border: 3px solid #4db6ac;
+            border-radius: 10px;
+            outline: none;
+            transition: all 0.3s;
+        }
+        
+        .answer-input:focus {
+            border-color: #ff6b6b;
+            box-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .btn {
+            background: #4db6ac;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+        }
+        
+        #check-btn {
+            background: #ff6b6b;
+        }
+        
+        #next-btn {
+            background: #81c784;
+        }
+        
+        #restart-btn {
+            background: #64b5f6;
+        }
+        
+        .feedback {
+            min-height: 60px;
+            font-size: 1.8rem;
+            font-weight: bold;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            transition: all 0.3s;
+        }
+        
+        .correct {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .incorrect {
+            background: #ffebee;
+            color: #c62828;
+        }
+        
+        .instructions {
+            background: #e3f2fd;
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 20px;
+            text-align: left;
+            font-size: 1rem;
+            color: #1565c0;
+        }
+        
+        .instructions h3 {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #0d47a1;
+        }
+        
+        .instructions ul {
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin: 8px 0;
+        }
+        
+        .difficulty {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .difficulty-btn {
+            padding: 10px 20px;
+            border-radius: 20px;
+            border: 2px solid #bbbbbb;
+            background: #f5f5f5;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .difficulty-btn.active {
+            background: #4db6ac;
+            color: white;
+            border-color: #4db6ac;
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px 15px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .problem-container {
+                font-size: 2.5rem;
+                padding: 20px 10px;
+            }
+            
+            .answer-input {
+                font-size: 2rem;
+                width: 100px;
+            }
+            
+            .controls {
+                flex-wrap: wrap;
+            }
+            
+            .btn {
+                padding: 12px 20px;
+                font-size: 1rem;
+                flex: 1;
+                min-width: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧮 口算小达人 🧮</h1>
+        
+        <div class="game-info">
+            <div class="score">得分: <span id="score">0</span></div>
+            <div class="streak">连续正确: <span id="streak">0</span></div>
+            <div class="total">总题数: <span id="total">0</span></div>
+        </div>
+        
+        <div class="difficulty">
+            <button class="difficulty-btn active" data-diff="easy">简单</button>
+            <button class="difficulty-btn" data-diff="medium">中等</button>
+            <button class="difficulty-btn" data-diff="hard">挑战</button>
+        </div>
+        
+        <div class="problem-container">
+            <div class="problem">
+                <span id="num1">23</span>
+                <span class="operator" id="operator">+</span>
+                <span id="num2">15</span>
+                <span>=</span>
+                <input type="number" class="answer-input" id="answer" autofocus>
+            </div>
+        </div>
+        
+        <div class="feedback" id="feedback">
+            请输入你的答案
+        </div>
+        
+        <div class="controls">
+            <button class="btn" id="check-btn">检查答案</button>
+            <button class="btn" id="next-btn">下一题</button>
+            <button class="btn" id="restart-btn">重新开始</button>
+        </div>
+        
+        <div class="instructions">
+            <h3>游戏说明</h3>
+            <ul>
+                <li>选择适合你的难度：简单(加减一位数)、中等(加减两位数)、挑战(混合)</li>
+                <li>在输入框中填写答案后点击"检查答案"</li>
+                <li>答对得10分，连续答对会有额外奖励</li>
+                <li>点击"下一题"继续挑战</li>
+                <li>可以随时点击"重新开始"重置游戏</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // 游戏变量
+        let score = 0;
+        let streak = 0;
+        let totalQuestions = 0;
+        let correctAnswer = 0;
+        let difficulty = "easy"; // 默认难度
+        
+        // DOM元素
+        const num1El = document.getElementById('num1');
+        const num2El = document.getElementById('num2');
+        const operatorEl = document.getElementById('operator');
+        const answerInput = document.getElementById('answer');
+        const feedbackEl = document.getElementById('feedback');
+        const scoreEl = document.getElementById('score');
+        const streakEl = document.getElementById('streak');
+        const totalEl = document.getElementById('total');
+        const checkBtn = document.getElementById('check-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const difficultyBtns = document.querySelectorAll('.difficulty-btn');
+        
+        // 初始化游戏
+        function initGame() {
+            score = 0;
+            streak = 0;
+            totalQuestions = 0;
+            updateStats();
+            generateProblem();
+            feedbackEl.textContent = "请输入你的答案";
+            feedbackEl.className = "feedback";
+            answerInput.value = "";
+            answerInput.disabled = false;
+            checkBtn.disabled = false;
+            answerInput.focus();
+        }
+        
+        // 更新统计信息
+        function updateStats() {
+            scoreEl.textContent = score;
+            streakEl.textContent = streak;
+            totalEl.textContent = totalQuestions;
+        }
+        
+        // 生成题目
+        function generateProblem() {
+            let num1, num2, operator;
+            
+            // 随机选择运算符（加法或减法）
+            operator = Math.random() > 0.5 ? '+' : '-';
+            
+            // 根据难度生成题目
+            switch(difficulty) {
+                case "easy": // 两位数加减一位数
+                    num1 = Math.floor(Math.random() * 90) + 10; // 10-99
+                    num2 = Math.floor(Math.random() * 9) + 1;   // 1-9
+                    break;
+                    
+                case "medium": // 两位数加减两位数
+                    num1 = Math.floor(Math.random() * 90) + 10; // 10-99
+                    num2 = Math.floor(Math.random() * 90) + 10; // 10-99
+                    
+                    // 如果是减法，确保结果为正
+                    if (operator === '-' && num1 < num2) {
+                        [num1, num2] = [num2, num1]; // 交换数字
+                    }
+                    break;
+                    
+                case "hard": // 混合难度
+                    // 50%概率是一位数，50%是两位数
+                    const isTwoDigit = Math.random() > 0.5;
+                    
+                    num1 = Math.floor(Math.random() * 90) + 10; // 10-99
+                    num2 = isTwoDigit ? 
+                        Math.floor(Math.random() * 90) + 10 : // 10-99
+                        Math.floor(Math.random() * 9) + 1;    // 1-9
+                    
+                    // 如果是减法，确保结果为正
+                    if (operator === '-' && num1 < num2) {
+                        [num1, num2] = [num2, num1]; // 交换数字
+                    }
+                    break;
+            }
+            
+            // 计算正确答案
+            correctAnswer = operator === '+' ? num1 + num2 : num1 - num2;
+            
+            // 更新UI显示题目
+            num1El.textContent = num1;
+            num2El.textContent = num2;
+            operatorEl.textContent = operator;
+            
+            // 重置反馈
+            feedbackEl.textContent = "请输入你的答案";
+            feedbackEl.className = "feedback";
+            answerInput.value = "";
+            answerInput.focus();
+        }
+        
+        // 检查答案
+        function checkAnswer() {
+            const userAnswer = parseInt(answerInput.value);
+            
+            if (isNaN(userAnswer)) {
+                feedbackEl.textContent = "请输入一个有效的数字！";
+                feedbackEl.className = "feedback incorrect";
+                return;
+            }
+            
+            totalQuestions++;
+            
+            if (userAnswer === correctAnswer) {
+                // 正确答案
+                score += 10;
+                streak++;
+                
+                // 连续答对奖励
+                if (streak >= 3) {
+                    score += streak * 2; // 额外奖励
+                    feedbackEl.textContent = `太棒了！连续答对${streak}题！+${streak * 2}分`;
+                } else {
+                    feedbackEl.textContent = "✓ 正确！太聪明了！";
+                }
+                
+                feedbackEl.className = "feedback correct";
+            } else {
+                // 错误答案
+                streak = 0;
+                feedbackEl.innerHTML = `✗ 不正确！正确答案是: <span style="font-size: 1.2em;">${correctAnswer}</span>`;
+                feedbackEl.className = "feedback incorrect";
+            }
+            
+            // 更新统计信息
+            updateStats();
+            
+            // 禁用输入和检查按钮
+            answerInput.disabled = true;
+            checkBtn.disabled = true;
+        }
+        
+        // 事件监听器
+        checkBtn.addEventListener('click', checkAnswer);
+        
+        nextBtn.addEventListener('click', function() {
+            generateProblem();
+            answerInput.disabled = false;
+            checkBtn.disabled = false;
+        });
+        
+        restartBtn.addEventListener('click', initGame);
+        
+        // 按回车键提交答案
+        answerInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                if (!answerInput.disabled) {
+                    checkAnswer();
+                } else {
+                    generateProblem();
+                }
+            }
+        });
+        
+        // 难度选择
+        difficultyBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // 移除所有active类
+                difficultyBtns.forEach(b => b.classList.remove('active'));
+                // 给当前按钮添加active类
+                this.classList.add('active');
+                // 更新难度
+                difficulty = this.getAttribute('data-diff');
+                // 重新开始游戏
+                initGame();
+            });
+        });
+        
+        // 开始游戏
+        initGame();
+    </script>
+</body>
+</html>
